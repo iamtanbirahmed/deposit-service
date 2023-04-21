@@ -31,4 +31,5 @@ public class Deposit {
 
     @Column(name = "load_time")
     private LocalDateTime requestTime;
+
 }

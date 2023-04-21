@@ -3,6 +3,7 @@ package com.tryvalut.api.deposit.component;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tryvalut.api.deposit.dtos.DepositDTO;
 import com.tryvalut.api.deposit.dtos.DepositOutputDTO;
+import com.tryvalut.api.deposit.exception.DepositException;
 import com.tryvalut.api.deposit.service.DepositService;
 import jakarta.annotation.PostConstruct;
 import lombok.AllArgsConstructor;
@@ -31,9 +32,9 @@ public class FundLoader {
 
 
     @PostConstruct
-    public void requestDeposit() {
+    public void requestDeposit() throws Exception {
         Resource resource = resourceLoader.getResource("classpath:input.txt");
-//        ArrayList<Integer> errors = new ArrayList<>();
+        ArrayList<String> errors = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(resource.getInputStream()))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -43,14 +44,14 @@ public class FundLoader {
                 try {
                     depositService.save(depositDTO);
                 } catch (Exception e) {
-                    logger.error(objectMapper.writeValueAsString(new DepositOutputDTO(depositDTO.depositId(), depositDTO.customerId(), false)));
                     logger.debug(e.getMessage());
-//                    errors.add(Integer.parseInt(e.getMessage()));
+                    logger.error(objectMapper.writeValueAsString(new DepositOutputDTO(depositDTO.depositId(), depositDTO.customerId(), false)));
+                    errors.add(e.getMessage());
                 }
             }
+            logger.debug("Total number of errors {}",errors.size());
 
         } catch (IOException e) {
-
             logger.error(e.getMessage());
         }
 

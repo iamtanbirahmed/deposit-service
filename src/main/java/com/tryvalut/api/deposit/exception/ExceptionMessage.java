@@ -1,6 +1,8 @@
 package com.tryvalut.api.deposit.exception;
 
 
-public record ExceptionMessage (Integer depositId, Integer customerId){
+import com.tryvalut.api.deposit.validator.ValidationResult;
+
+public record ExceptionMessage (Integer depositId, Integer customerId, ValidationResult result){
 
 }
